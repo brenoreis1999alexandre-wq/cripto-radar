@@ -34,6 +34,10 @@ class MainActivity : Activity() {
             allowFileAccess = false
             allowContentAccess = false
             cacheMode = WebSettings.LOAD_DEFAULT
+            // Honor the HTML device-width viewport and fit layout to the phone's available width.
+            useWideViewPort = true
+            loadWithOverviewMode = true
+            textZoom = 100
             setSupportZoom(false)
             builtInZoomControls = false
             displayZoomControls = false
@@ -58,6 +62,7 @@ class MainActivity : Activity() {
         webView.webChromeClient = WebChromeClient()
         container.addView(webView, FrameLayout.LayoutParams(-1, -1))
         setContentView(container)
+        webView.setInitialScale(0)
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
     }
 
