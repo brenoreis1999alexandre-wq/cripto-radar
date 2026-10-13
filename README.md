@@ -1,11 +1,7 @@
 # Cripto Radar
 
-App web/PWA em português para acompanhar cotações e gráficos de criptomoedas em BRL.
+O Cripto Radar tem versão web em GitHub Pages e um projeto Android em `android-app/`. O aplicativo Android empacota a interface localmente dentro de uma Activity nativa; os dados em tempo real continuam vindo das APIs públicas CoinGecko/Binance (sem chave de cotação).
 
-## Dados e imagens
-
-O app usa endpoints públicos da CoinGecko e da Binance; a versão atual não exige chave de API. As chamadas são feitas pelo navegador e precisam de internet. O service worker mantém apenas os arquivos do app para abertura offline; não armazena cotações em cache.
-
-## Publicação
-
-O projeto pode ser servido como site estático por GitHub Pages. `index.html` referencia `manifest.webmanifest`, ícone local e `sw.js`.
+- App Android: `android-app/` (Application ID `com.breno.criptoradar`, target API 36).
+- APK debug para instalar e AAB de release são gerados por GitHub Actions. O AAB precisa receber assinatura de upload antes de ser publicado na Play Store.
+- Versão web: GitHub Pages.
