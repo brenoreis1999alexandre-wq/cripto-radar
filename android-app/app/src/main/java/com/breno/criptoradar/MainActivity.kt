@@ -36,7 +36,7 @@ class MainActivity : Activity() {
             cacheMode = WebSettings.LOAD_DEFAULT
             // Honor the HTML device-width viewport and fit layout to the phone's available width.
             useWideViewPort = true
-            loadWithOverviewMode = true
+            loadWithOverviewMode = false
             textZoom = 100
             setSupportZoom(false)
             builtInZoomControls = false
@@ -50,6 +50,31 @@ class MainActivity : Activity() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest) =
                 assetLoader.shouldInterceptRequest(request.url)
 
+            override fun onPageFinished(view: WebView, url: String?) {
+                super.onPageFinished(view, url)
+                view.post {
+                    val cssWidth = (view.width / resources.displayMetrics.density).toInt().coerceAtLeast(320)
+                    val script = """
+                        (function() {
+                          var width = ${cssWidth};
+                          var viewport = document.querySelector('meta[name="viewport"]');
+                          if (viewport) viewport.setAttribute('content', 'width=' + width + ', initial-scale=1');
+                          document.documentElement.style.setProperty('width', width + 'px', 'important');
+                          document.documentElement.style.setProperty('max-width', width + 'px', 'important');
+                          document.body.style.setProperty('width', width + 'px', 'important');
+                          document.body.style.setProperty('max-width', width + 'px', 'important');
+                          document.documentElement.style.overflowX = 'hidden';
+                          document.body.style.overflowX = 'hidden';
+                          document.documentElement.scrollLeft = 0;
+                          document.body.scrollLeft = 0;
+                          window.scrollTo(0, 0);
+                          window.dispatchEvent(new Event('resize'));
+                        })();
+                    """.trimIndent()
+                    view.evaluateJavascript(script, null)
+                }
+            }
+
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val uri = request.url
                 if (uri.host == "appassets.androidplatform.net") return false
@@ -62,7 +87,7 @@ class MainActivity : Activity() {
         webView.webChromeClient = WebChromeClient()
         container.addView(webView, FrameLayout.LayoutParams(-1, -1))
         setContentView(container)
-        webView.setInitialScale(0)
+        webView.setInitialScale(100)
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
     }
 
